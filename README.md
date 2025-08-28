@@ -1,6 +1,5 @@
-## ePiE: Description
-ePiE is a spatially explicit model that estimates concentrations of active pharmaceutical ingredients (APIs) in surface waters across Europe. This repository contains the R package of the ePiE model. 
-
+## ePiE
+ePiE is a spatially explicit model that estimates concentrations of active pharmaceutical ingredients (APIs) in surface waters across Europe. This repository contains the R package of the ePiE model alongside all the required input parameters, such as the parameterized European river catchment and discharge data. 
 ## ePiE: Installation
 
 The ePiE package can be directly installed from R using the regular `install.packages()` function, see the code below.
