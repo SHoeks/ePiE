@@ -1,0 +1,14 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^\src/._RcppExports.cpp
+src/._RcppExports.cpp
+._RcppExports.cpp
+._$
+^inst/basin_db$
+^inst/cpp$
+^inst/flow_lt$
+^inst/pH$
+^inst/win_exec$
+^inst/test_results$
+^inst/other_geo$
+^inst/test$

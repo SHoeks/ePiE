@@ -1,0 +1,12 @@
+title: "ePiE"
+description: "ePiE is a spatially explicit model that estimates concentrations of active pharmaceutical ingredients (APIs) in surface waters across Europe. This repository contains the R package of the ePiE model."
+
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
+include:
+  - README.md
+
+theme: jekyll-theme-cayman
