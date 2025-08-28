@@ -3,21 +3,25 @@ ePiE is a spatially explicit model that estimates concentrations of active pharm
 
 ## ePiE Installation
 
-The ePiE package can be directly installed from R using the regular `install.packages()` function:
+The ePiE package can be directly installed from R using the regular `install.packages()` function, see the code below.
 
 ``` r
-# Load the remotes package
-library('remotes') # or use library('devtools')
+# Install the package on Windows
+install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/ePiE_1.21.zip", 
+                 repos=NULL, 
+                 method="libcurl")
 
-# Install the MadingleyR package
-install_github('MadingleyR/MadingleyR', subdir='Package', build_vignettes = TRUE)
+# Install the package on Mac/Linux
+install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/ePiE_1.21.tar.gz", 
+                 repos=NULL, 
+                 method="libcurl")
+```
 
-# Load MadingleyR package 
-library('MadingleyR')
+## ePiE Example run
 
-# Get version MadingleyR and C++ source code
-madingley_version( )
+The code below illustrates a simple example run of the ePiE model for Ibuprofen. This example is mainly intended to provide an overview of the ePiE R package workflow.
 
-# View the MadingleyR tutorial vignette
-vignette('MadingleyR')
+
+```r
+Available soon!
 ```
