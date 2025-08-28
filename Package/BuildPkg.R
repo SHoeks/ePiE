@@ -52,6 +52,7 @@ if(FALSE){
   install.packages(pkg_files[length(pkg_files)],repos = NULL)
 }
 
+# load function for testing
 if(FALSE){
   devtools::load_all()
 }
