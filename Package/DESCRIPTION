@@ -1,12 +1,11 @@
 Package: ePiE
 Type: Package
 Title: ePiE model R-package
-Version: 1.21
-Date: 2024-12-17
+Version: 1.25
+Date: 2025-08-29
 Author: Selwyn Hoeks, Rik Oldenkamp
 Maintainer: Selwyn Hoeks <selwyn.hoeks@ru.nl>
-Description: One paragraph description of what the package does as one
-        or more full sentences.
+Description: ePiE is a spatially explicit model that estimates concentrations of active pharmaceutical ingredients (APIs) in surface waters across Europe. This repository contains the R package of the ePiE model alongside all the required input parameters, such as the parameterized European river catchment and discharge data.
 VignetteBuilder: knitr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -14,15 +13,9 @@ RoxygenNote: 7.3.2
 License: GPL (>= 2)
 SystemRequirements: C++11
 Imports: 
-    fst (>= 0.9.8),
-    glue (>= 1.6.2),
-    htmlwidgets (>= 1.6.4),
-    leaflet (>= 2.2.1),
-    mapview (>= 2.11.2),
-    plyr (>= 1.8.9),
+    mapview (>= 2.11.3),
     Rcpp (>= 1.0.11),
     sf (>= 1.0.15),
-    stringr (>= 1.5.1),
     terra (>= 1.8.9)
 LinkingTo: Rcpp
 Depends: 

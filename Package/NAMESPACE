@@ -15,6 +15,7 @@ export(RunSimpleTreatBasinAvg)
 export(SetLocalParameters)
 export(SimpleTreat4_0)
 export(InteractiveResultMap)
+export(ViewBasinMap)
 useDynLib(ePiE)
 importFrom(Rcpp, sourceCpp)
 

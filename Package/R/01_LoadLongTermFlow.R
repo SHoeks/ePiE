@@ -10,7 +10,7 @@ LoadLongTermFlow = function(flow_scenario="average"){
   flow_index = ePiE::flow_index
 
   # create template raster based on flow_index
-  rast_template = rast(nrows=flow_index$nrows,ncols=flow_index$ncols,
+  rast_template = terra::rast(nrows=flow_index$nrows,ncols=flow_index$ncols,
                        xmin=flow_index$xmin,xmax=flow_index$xmax,
                        ymin=flow_index$ymin,ymax=flow_index$ymax)
   rast_template[] = NA

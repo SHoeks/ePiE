@@ -1,8 +1,8 @@
-InteractiveResultMap = function(results, basin_id){
+InteractiveResultMap = function(results, basin_id, cex = 2){
 
   # subset and format river data
   river = results$pts
-  river = river[river$basin_ID==basin_id,]
+  river = river[river$basin_id==basin_id,]
   river$Log10_Concentration_ngL = log10(river$C_w*1000)
   river$Log10_Concentration_ngL[is.infinite(river$Log10_Concentration_ngL)] = NA
   lake_points = river[river$Pt_type=="Hydro_Lake",]
@@ -13,7 +13,11 @@ InteractiveResultMap = function(results, basin_id){
   if(nlakes>0) {
     lake_conc = results$hl
     Hylak_id = strsplit(lake_points$ID,"_|-")
-    Hylak_id = lapply(Hylak_id,\(x)x[[2]])
+    if(grepl("sc",basin_id)){
+      Hylak_id = lapply(Hylak_id,\(x)x[[3]])
+    }else{
+      Hylak_id = lapply(Hylak_id,\(x)x[[2]])
+    }
     Hylak_id = unlist(Hylak_id)
     lake_points$Hylak_id = as.numeric(Hylak_id)
     lake_conc = lake_conc[lake_conc$Hylak_id %in% lake_points$Hylak_id,]
@@ -50,7 +54,7 @@ InteractiveResultMap = function(results, basin_id){
   map = mapview::mapview(
     river_sf,
     zcol = "Log10_Concentration_ngL",
-    cex = 2,
+    cex = cex,
     col.regions = pal(npal),
     legend = TRUE
   )
@@ -58,7 +62,7 @@ InteractiveResultMap = function(results, basin_id){
     map = map + mapview::mapview(
       lakes_apprx,
       zcol = "Log10_Concentration_ngL",
-      cex = 2,
+      cex = cex,
       col.regions = pal(npallake),
       legend = FALSE
     )
