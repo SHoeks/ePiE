@@ -6,22 +6,28 @@ ePiE is a spatially explicit model that estimates concentrations of active pharm
 Run the code below to make sure all dependencies are installed (because ePiE is not yet in CRAN, this needs to be done manually).
 
 ``` r
-if(!require("Rcpp")) install.packages("Rcpp")
-if(!require("terra")) install.packages("terra")
-if(!require("sf")) install.packages("sf")
-if(!require("mapview")) install.packages("mapview")
+# install dependencies
+if(!require("Rcpp")) install.packages("Rcpp") # for source code in C++
+if(!require("terra")) install.packages("terra") # for flow rasters
+if(!require("sf")) install.packages("sf") # for rivers and lakes
+if(!require("mapview")) install.packages("mapview") # for interactive map
 ```
 
 Next, the ePiE package can be directly installed from R using the regular `install.packages()` function, see the code below.
 
 ``` r
 # Install the R package on Windows
-install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/ePiE_1.25.zip", 
+install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/Builds/ePiE_1.25.zip", 
                  repos=NULL, 
                  method="libcurl")
 
-# Install the R package on Mac/Linux
-install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/ePiE_1.25.tar.gz", 
+# Install the R package on MacOS
+install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/Builds/ePiE_1.25.tgz",
+                 repos=NULL, 
+                 method="libcurl")
+
+# Install the R package on Linux
+install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/Builds/ePiE_1.25.tar.gz", 
                  repos=NULL, 
                  method="libcurl")
 ```
