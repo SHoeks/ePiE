@@ -217,13 +217,33 @@ Set_local_parameters_custom_removal_fast3 = function(pts,HL,cons,chem,chem_ii){
 
   # --- Chemical- and environment-dependent characteristics ----
   #neutral fraction
-  pts$fn <- ifelse(chem$class[chem_idx]=="neutral",1,
-                   ifelse(chem$class[chem_idx]=="acid",1/(1+10^(pts$pH-chem$pKa[chem_idx])),
-                          ifelse(chem$class[chem_idx]=="base",1/(1+10^(chem$pKa[chem_idx]-pts$pH)),NA)))
+  # pts$fn <- ifelse(chem$class[chem_idx]=="neutral",1,
+  #                ifelse(chem$class[chem_idx]=="acid",1/(1+10^(pts$pH-chem$pKa[chem_idx])),
+  #                       ifelse(chem$class[chem_idx]=="base",1/(1+10^(chem$pKa[chem_idx]-pts$pH)),NA)))
+  if(chem$class[chem_idx]=="neutral"){
+    pts$fn = 1
+  } else if(chem$class[chem_idx]=="acid"){
+    pts$fn = 1/(1+10^(pts$pH-chem$pKa[chem_idx]))
+  } else if(chem$class[chem_idx]=="base"){
+    pts$fn = 1/(1+10^(chem$pKa[chem_idx]-pts$pH))
+  } else {
+    pts$fn = NA
+  }
 
-  if (nrow(HL)!=0) HL$fn <- ifelse(chem$class[chem_idx]=="neutral",1,
-                                   ifelse(chem$class[chem_idx]=="acid",1/(1+10^(HL$pH-chem$pKa[chem_idx])),
-                                          ifelse(chem$class[chem_idx]=="base",1/(1+10^(chem$pKa[chem_idx]-HL$pH)),NA)))
+  if (nrow(HL)!=0){
+    #  HL$fn <- ifelse(chem$class[chem_idx]=="neutral",1,
+    #                                  ifelse(chem$class[chem_idx]=="acid",1/(1+10^(HL$pH-chem$pKa[chem_idx])),
+    #                                         ifelse(chem$class[chem_idx]=="base",1/(1+10^(chem$pKa[chem_idx]-HL$pH)),NA)))
+    if(chem$class[chem_idx]=="neutral"){
+      HL$fn = 1
+    } else if(chem$class[chem_idx]=="acid"){
+      HL$fn = 1/(1+10^(HL$pH-chem$pKa[chem_idx]))
+    } else if(chem$class[chem_idx]=="base"){
+      HL$fn = 1/(1+10^(chem$pKa[chem_idx]-HL$pH))
+    } else {
+      HL$fn = NA
+    }
+  }
 
   # check additional chem columns, remove these from the default inputs
   checkCols = c("Kp_susp_n","Kp_susp_alt","Kp_DOC_n","Kp_DOC_alt","Kp_sd_n","Kp_sd_alt","k_bio_sd1_n","k_bio_sd1_alt","k_hydro_sd_n","k_hydro_sd_alt")
