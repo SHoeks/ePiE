@@ -19,3 +19,6 @@ Builds/ePiE_1.12.tar.gz
 Inputs/2025_08_29/data_export_2025_08_15/csv/pts_000023.csv
 Inputs/2025_08_29/data_export_2025_08_15/env_export.RData
 .DS_Store
+.Rproj.user
+Inputs/2026_08_01/plotLakes_webapp/HydroLAKES_polys_v10.gdb.zip
+/Inputs/2026_08_01/plotLakes_webapp/HydroLAKES_polys_v10.gdb

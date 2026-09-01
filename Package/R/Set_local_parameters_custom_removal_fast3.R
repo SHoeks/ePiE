@@ -29,7 +29,7 @@ Set_local_parameters_custom_removal_fast3 = function(pts,HL,cons,chem,chem_ii){
     HL$pH[is.na(HL$pH)] = default_pH
   }
 
-  #Default values (should be assigned as new fields to pts and HL when available)
+  #Default values (should be assigned as new fields to pts when available)
   pts$BACT_sw     <- 1E6         #bacterial density in surface water (cells/L), range 1E6-1E9 (REF)
   pts$BACT_sed    <- 1E5         #bacterial density in sediments (cells/L), assumed factor 10 lower than surface waters
   pts$T_sw        <- 285         #local water temperature (K), for now: 285 K (ECHA 2016)
@@ -46,6 +46,17 @@ Set_local_parameters_custom_removal_fast3 = function(pts,HL,cons,chem,chem_ii){
   pts$fOC_susp    <- 0.1         #mass fraction organic carbon in suspended solids (-), proposed default value based on Fantke et al (2016)
   pts$fOC_sd      <- 0.05        #mass fraction organic carbon in sediments (-), proposed default value based on Fantke et al (2016)
 
+  # #Set the ratio between sw BACT and test BACT
+  # if(!hasName(chem, "BACT_test") || is.na(chem$BACT_test[chem_idx])) {
+  #   pts$BACT_sw <- pts$BACT_sw / 1E6
+  # } else {
+  #   pts$BACT_sw <- pts$BACT_sw / chem$BACT_test[chem_idx]
+  # }
+
+  # #Assuming the input for sediment testing conditions are not available
+  # pts$BACT_sed = pts$BACT_sed / 1E5
+
+  #Default values for HL (lakes)
   if (nrow(HL)!=0) {
     HL$BACT_sw     <- 1E6                              #bacterial density in surface water (cells/L), range 1E6-1E9 (REF)
     HL$BACT_sed    <- 1E5                              #bacterial density in sediments (cells/L), same assumed as surface waters

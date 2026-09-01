@@ -38,11 +38,15 @@ CompleteChemProperties = function(chem){
   chem$MW = as.numeric(chem$MW)
   chem$pKa = as.numeric(chem$pKa)
   chem$KOW_n = as.numeric(chem$KOW_n)
-  checkCols = c("k_bio_wwtp_n","f_u","f_f","f_uf","k_bio_wwtp_alt","Kp_ps_n","Kp_as_n","Kp_ps_alt","k_bio_wwtp",
-                "Kp_as_alt","KOC_n","KOC_alt","k_bio_sw1_n","k_bio_sw1_alt","T_bio_sw_n","T_bio_sw_alt", "T_bio_sd_n","T_bio_sd_alt",
-                "k_hydro_sw_n","k_hydro_sw_alt","T_hydro_sw_n","T_hydro_sd_n","T_hydro_sw_alt","T_hydro_sd_alt",
-                "k_photo12_sw_n","k_photo12_sw_alt","T_photo12_sw_n", "T_photo12_sw_alt",
-                "alpha_n","lambda_solar_n","alpha_alt","lambda_solar_alt","fn_WWTP","Kp_sd_n","Kp_sd_alt")
+  checkCols = c("k_bio_wwtp","k_bio_wwtp_n","k_bio_wwtp_alt","f_u","f_f","f_uf","fn_WWTP",
+                "Kp_ps_n","Kp_as_n","Kp_ps_alt","Kp_as_alt","KOC_n","KOC_alt","Kp_sd_n","Kp_sd_alt",
+                "k_bio_sw1","k_bio_sw1_n","k_bio_sw1_alt","T_bio_sw_n","T_bio_sw_alt",
+                "k_bio_sw2","k_bio_sw2_n","k_bio_sw2_alt",
+                "T_bio_sd_n","T_bio_sd_alt",
+                "k_hydro_sw","k_hydro_sw_n","k_hydro_sw_alt","T_hydro_sw_n","T_hydro_sw_alt",
+                "T_hydro_sd_alt","T_hydro_sd_n",
+                "k_photo12_sw","k_photo12_sw_n","k_photo12_sw_alt","T_photo12_sw_n", "T_photo12_sw_alt",
+                "alpha_n","lambda_solar_n","alpha_alt","lambda_solar_alt")
   for(i in checkCols) chem = CheckIfColumnExistsCreateEmpty(chem,i,NA)
 
   #urinary excretion and fecal egestion
@@ -51,10 +55,29 @@ CompleteChemProperties = function(chem){
   chem$f_f = ifelse(is.na(chem$f_f),0,chem$f_f)
   chem$f_uf[chem$f_uf==0] = chem$f_u[chem$f_uf==0]+chem$f_f[chem$f_uf==0]
 
-  #biodegradation in WWTP
+  #biodegradation in WWTP (assign all same value)
+  for(i in 1:nrow(chem)){
+    ct = chem[i,]
+    k_bio_wwtp = c(ct$k_bio_wwtp_n,ct$k_bio_wwtp_alt,ct$k_bio_wwtp) |> unique()
+    k_bio_wwtp = k_bio_wwtp[!is.na(k_bio_wwtp)]
+    if(length(k_bio_wwtp)==0){
+      ct$k_bio_wwtp_n = 0
+      ct$k_bio_wwtp_alt = 0
+      ct$k_bio_wwtp = 0
+    }
+    if(length(k_bio_wwtp)==1){
+      ct$k_bio_wwtp_n = k_bio_wwtp
+      ct$k_bio_wwtp_alt = k_bio_wwtp
+      ct$k_bio_wwtp = k_bio_wwtp
+    }
+    chem[i,] = ct
+  }
   chem$k_bio_wwtp_n = ifelse(is.na(chem$k_bio_wwtp_n),chem$k_bio_wwtp,chem$k_bio_wwtp_n)
   chem$k_bio_wwtp_n = ifelse(is.na(chem$k_bio_wwtp_n),0,chem$k_bio_wwtp_n) #worst-case no WWTP biodegradation if k_bio_wwtp = NA
   chem$k_bio_wwtp_alt = ifelse(is.na(chem$k_bio_wwtp_alt),0,chem$k_bio_wwtp_alt)
+  chem$k_bio_wwtp_n = as.numeric(chem$k_bio_wwtp_n)
+  chem$k_bio_wwtp_alt = as.numeric(chem$k_bio_wwtp_alt)
+  chem$k_bio_wwtp = as.numeric(chem$k_bio_wwtp)
 
   chem$fn_WWTP = ifelse(chem$class=="neutral",1, #fraction neutral in WWTP (pH=7)
                          ifelse(chem$class=="acid",1/(1+10^(7-chem$pKa)),
@@ -65,7 +88,6 @@ CompleteChemProperties = function(chem){
   #sorption
   chem$Kp_ps_n = ifelse(is.na(chem$Kp_ps_n)&!is.na(chem$Kp_as_n),(0.30/0.37)*chem$Kp_as_n,chem$Kp_ps_n) #if Kp_ps=NA, extrapolate from Kp_as based on fOC in respective sludges
   chem$Kp_ps_alt = ifelse(is.na(chem$Kp_ps_alt)&!is.na(chem$Kp_as_alt),(0.30/0.37)*chem$Kp_as_alt,chem$Kp_ps_alt) #if Kp_ps=NA, extrapolate from Kp_as based on fOC in respective sludges
-
   chem$Kp_as_n = ifelse(is.na(chem$Kp_as_n)&!is.na(chem$Kp_ps_n),(0.37/0.30)*chem$Kp_ps_n,chem$Kp_as_n) #if Kp_as=NA, extrapolate from Kp_ps based on fOC in respective sludges
   chem$Kp_as_alt = ifelse(is.na(chem$Kp_as_alt)&!is.na(chem$Kp_ps_alt),(0.37/0.30)*chem$Kp_ps_alt,chem$Kp_as_alt) #if Kp_as=NA, extrapolate from Kp_ps based on fOC in respective sludges
 
@@ -83,38 +105,106 @@ CompleteChemProperties = function(chem){
 
 
   chem$KOW_alt = 10^(log10(chem$KOW_n)-3.5) #assumption that KOW of alternate form is about 3.5 log-points lower than the neutral KOW (Trapp & Horobin, 2005)
-
   chem$Kp_ps_n = ifelse(is.na(chem$Kp_ps_n),0.30*chem$KOC_n,chem$Kp_ps_n) #estimation of Kp_ps from KOC of neutral and alternate form
   chem$Kp_ps_alt = ifelse(is.na(chem$Kp_ps_alt),0.30*chem$KOC_alt,chem$Kp_ps_alt)
   chem$Kp_as_n = ifelse(is.na(chem$Kp_as_n),0.37*chem$KOC_n,chem$Kp_as_n)
   chem$Kp_as_alt = ifelse(is.na(chem$Kp_as_alt),0.37*chem$KOC_alt,chem$Kp_as_alt)
-
   chem$Kp_ps = chem$Kp_ps_n*chem$fn_WWTP + chem$Kp_ps_alt*(1-chem$fn_WWTP)
   chem$Kp_as = chem$Kp_as_n*chem$fn_WWTP + chem$Kp_as_alt*(1-chem$fn_WWTP)
 
   #biodegradation
+  for(i in 1:nrow(chem)){
+    ct = chem[i,]
+    k_bio_sw1 = c(ct$k_bio_sw1_n,ct$k_bio_sw1_alt,ct$k_bio_sw1) |> unique()
+    k_bio_sw1 = k_bio_sw1[!is.na(k_bio_sw1)]
+    k_bio_sw2 = c(ct$k_bio_sw2_n,ct$k_bio_sw2_alt,ct$k_bio_sw2) |> unique()
+    k_bio_sw2 = k_bio_sw2[!is.na(k_bio_sw2)]
+    if(length(k_bio_sw1)==0){
+      ct$k_bio_sw1_n = 0
+      ct$k_bio_sw1_alt = 0
+      ct$k_bio_sw1 = 0
+    }
+    if(length(k_bio_sw1)==1){
+      ct$k_bio_sw1_n = k_bio_sw1
+      ct$k_bio_sw1_alt = k_bio_sw1
+      ct$k_bio_sw1 = k_bio_sw1
+    }
+    if(length(k_bio_sw2)==0){
+      ct$k_bio_sw2_n = 0
+      ct$k_bio_sw2_alt = 0
+      ct$k_bio_sw2 = 0
+    }
+    if(length(k_bio_sw2)==1){
+      ct$k_bio_sw2_n = k_bio_sw2
+      ct$k_bio_sw2_alt = k_bio_sw2
+      ct$k_bio_sw2 = k_bio_sw2
+    }
+    chem[i,] = ct
+  }
+  chem$k_bio_sw1_n = as.numeric(chem$k_bio_sw1_n)
+  chem$k_bio_sw1_alt = as.numeric(chem$k_bio_sw1_alt)
+  chem$k_bio_sw1 = as.numeric(chem$k_bio_sw1)
+  chem$k_bio_sw2_n = as.numeric(chem$k_bio_sw2_n)
+  chem$k_bio_sw2_alt = as.numeric(chem$k_bio_sw2_alt)
+  chem$k_bio_sw2 = as.numeric(chem$k_bio_sw2)
   chem$k_bio_sw1_n = ifelse(is.na(chem$k_bio_sw1_n),0,chem$k_bio_sw1_n) #worst-case no environmental biodegradation if k_bio_sw1 = NA
   chem$k_bio_sw1_alt = ifelse(is.na(chem$k_bio_sw1_alt),0,chem$k_bio_sw1_alt) #worst-case no environmental biodegradation if k_bio_sw1 = NA
-
-  chem$BACT_test = 1e6 #bacterial density is not available --> assume 1e6
+  if(!hasName(chem, "BACT_test")) chem$BACT_test = NA
+  chem$BACT_test[is.na(chem$BACT_test)] = 1e+06 #bacterial density is not available --> assume 1e6
   chem$k_bio_sw2_n = chem$k_bio_sw1_n/chem$BACT_test #2nd order biodeg is not available --> calculate from pseudo-first order
   chem$k_bio_sw2_alt = chem$k_bio_sw1_alt/chem$BACT_test
-
   chem$T_bio_sw_n = ifelse(is.na(chem$T_bio_sw_n),293.15,chem$T_bio_sw_n)
   chem$T_bio_sw_alt = ifelse(is.na(chem$T_bio_sw_alt),293.15,chem$T_bio_sw_alt)
   chem$T_bio_sd_n = ifelse(is.na(chem$T_bio_sd_n),293.15,chem$T_bio_sd_n)
   chem$T_bio_sd_alt = ifelse(is.na(chem$T_bio_sd_alt),293.15,chem$T_bio_sd_alt)
 
   #hydrolysis
+  for(i in 1:nrow(chem)){
+    ct = chem[i,]
+    k_hydro_sw = c(ct$k_hydro_sw_n,ct$k_hydro_sw_alt,ct$k_hydro_sw) |> unique()
+    k_hydro_sw = k_hydro_sw[!is.na(k_hydro_sw)]
+    if(length(k_hydro_sw)==0){
+      ct$k_hydro_sw_n = 0
+      ct$k_hydro_sw_alt = 0
+      ct$k_hydro_sw = 0
+    }
+    if(length(k_hydro_sw)==1){
+      ct$k_hydro_sw_n = k_hydro_sw
+      ct$k_hydro_sw_alt = k_hydro_sw
+      ct$k_hydro_sw = k_hydro_sw
+    }
+    chem[i,] = ct
+  }
+  chem$k_hydro_sw_n = as.numeric(chem$k_hydro_sw_n)
+  chem$k_hydro_sw_alt = as.numeric(chem$k_hydro_sw_alt)
+  chem$k_hydro_sw = as.numeric(chem$k_hydro_sw)
   chem$k_hydro_sw_n = ifelse(is.na(chem$k_hydro_sw_n),0,chem$k_hydro_sw_n) #worst-case no environmental hydrolysis if k_hydro_sw = NA
   chem$k_hydro_sw_alt = ifelse(is.na(chem$k_hydro_sw_alt),0,chem$k_hydro_sw_alt)
-
   chem$T_hydro_sw_n = ifelse(is.na(chem$T_hydro_sw_n),293.15,chem$T_hydro_sw_n)
   chem$T_hydro_sw_alt = ifelse(is.na(chem$T_hydro_sw_alt),293.15,chem$T_hydro_sw_alt)
   chem$T_hydro_sd_n = ifelse(is.na(chem$T_hydro_sd_n),293.15,chem$T_hydro_sd_n)
   chem$T_hydro_sd_alt = ifelse(is.na(chem$T_hydro_sd_alt),293.15,chem$T_hydro_sd_alt)
 
   #photolysis
+  for(i in 1:nrow(chem)){
+    ct = chem[i,]
+    k_photo12_sw = c(ct$k_photo12_sw_n,ct$k_photo12_sw_alt,ct$k_photo12_sw) |> unique()
+    k_photo12_sw = k_photo12_sw[!is.na(k_photo12_sw)]
+    if(length(k_photo12_sw)==0){
+      ct$k_photo12_sw_n = 0
+      ct$k_photo12_sw_alt = 0
+      ct$k_photo12_sw = 0
+    }
+    if(length(k_photo12_sw)==1){
+      ct$k_photo12_sw_n = k_photo12_sw
+      ct$k_photo12_sw_alt = k_photo12_sw
+      ct$k_photo12_sw = k_photo12_sw
+    }
+    chem[i,] = ct
+  }
+  chem$k_photo12_sw_n = as.numeric(chem$k_photo12_sw_n)
+  chem$k_photo12_sw_alt = as.numeric(chem$k_photo12_sw_alt)
+  chem$k_photo12_sw = as.numeric(chem$k_photo12_sw)
   chem$k_photo12_sw_n = ifelse(is.na(chem$k_photo12_sw_n),0,chem$k_photo12_sw_n)
   chem$k_photo12_sw_alt = ifelse(is.na(chem$k_photo12_sw_alt),0,chem$k_photo12_sw_alt)
   chem$T_photo12_sw_n = ifelse(is.na(chem$T_photo12_sw_n),293.15,chem$T_photo12_sw_n)
@@ -128,13 +218,11 @@ CompleteChemProperties = function(chem){
   #tabular relationship between lambda, alpha and solar radiation intensity, applicable to clear midsummer day at 47.5degN (Schwarzenbach et al., 1993)
   lambda_range  = c(0,298.75,301.25,303.75,306.75,308.75,311.25,313.75,316.25,318.75,321.25,325,335,345,355,365,375,385,395,405,435,465,495)
   alpha_range   = c(0.0430,0.0415,0.0395,0.0375,0.0355,0.0335,0.0320,0.0305,0.0290,0.0275,0.0260,0.0220,0.0185,0.0150,0.0125,0.0100,0.0083,0.0069,0.0055,0.0042,0.0028,0.0019,0.0010)
-
   for (i in 1:nrow(chem)) {
     if(is.na(chem$lambda_solar_n[i])){chem$alpha_n[i]=1e-6}else{ # assume low chem$alpha
       chem$alpha_n[i]      = alpha_range[findInterval(chem$lambda_solar_n[i],lambda_range)] #beam attenuation coefficient for light of wavelength lambda (cm-1)
     }
   }
-
   for (i in 1:nrow(chem)) {
     if(is.na(chem$lambda_solar_alt[i])){chem$alpha_alt[i]=1e-6}else{ # assume low chem$alpha
       chem$alpha_alt[i]      = alpha_range[findInterval(chem$lambda_solar_alt[i],lambda_range)]      #beam attenuation coefficient for light of wavelength lambda (cm-1)

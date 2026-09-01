@@ -1,12 +1,12 @@
-setwd("C:/Users/Selwyn Hoeks/Documents/GitHub/ePiE_Rpackage/Package")
+setwd("/Users/osx/Documents/GitHub/ePiE/Package")
 
 if(FALSE){
   detach("package:ePiE", unload=TRUE)
   remove.packages("ePiE")
   devtools::document()
 
-  # Load packages
-  packages = c("Rcpp","terra","sf","mapview")
+  # load packages
+  packages = c("Rcpp","terra","sf","mapview") # add jsonlite?
   for(x in packages) usethis::use_package(x, min_version = TRUE)
 
   # add data to pkg
@@ -34,6 +34,11 @@ if(FALSE){
     rm(flow_values)
     rm(flow_index)
 
+    # add eu wide most relevant basins
+    eu_basin_ids = readRDS("../Inputs/2025_08_29/relevant_basin_ids_europe.rds")
+    usethis::use_data(eu_basin_ids, overwrite = TRUE)
+    rm(eu_basin_ids)
+
   }
 
   # build package
@@ -43,17 +48,17 @@ if(FALSE){
   devtools::build(binary = TRUE, args = c('--preclean'))
 
   # install for testing
-  if(Sys.info()["sysname"]!="Windows"){
-    pkg_files = list.files("../",pattern="*.tar.gz",full.names=TRUE)
-    pkg_files = grep("ePiE",pkg_files,value=TRUE)
-    print(pkg_files)
-    print(pkg_files[length(pkg_files)])
-  }else{
-    pkg_files = list.files("../",pattern="*.zip",full.names=TRUE)
-    pkg_files = grep("ePiE",pkg_files,value=TRUE)
-    print(pkg_files)
-    print(pkg_files[length(pkg_files)])
+  rpkg_ext = "*.tar.gz"
+  if(Sys.info()["sysname"]=="Darwin"){
+    rpkg_ext = "*.tgz"
   }
+  if(Sys.info()["sysname"]=="Windows"){
+    rpkg_ext = "*.zip"
+  }
+  pkg_files = list.files("../",pattern=rpkg_ext,full.names=TRUE)
+  pkg_files = grep("ePiE",pkg_files,value=TRUE)
+  print(pkg_files)
+  print(pkg_files[length(pkg_files)])
   install.packages(pkg_files[length(pkg_files)],repos = NULL)
 }
 
