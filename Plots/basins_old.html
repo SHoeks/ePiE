@@ -5960,23 +5960,6 @@ background: transparent;
 
 </head>
 <body>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var map = HTMLWidgets.find("#htmlwidget-3d13759ec7eb9932f835").getMap();
-
-    // Remove current basemap(s)
-    map.eachLayer(function(layer) {
-        if (layer instanceof L.TileLayer) {
-            map.removeLayer(layer);
-        }
-    });
-
-    // Add desired basemap
-    L.tileLayer.provider("OpenStreetMap").addTo(map);
-});
-</script>
-
 <div id="htmlwidget_container">
   <div class="leaflet html-widget html-fill-item" id="htmlwidget-3d13759ec7eb9932f835" style="width:100%;height:400px;"></div>
 </div>
