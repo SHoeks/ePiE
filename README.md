@@ -17,17 +17,17 @@ Next, the ePiE package can be directly installed from R using the regular `insta
 
 ``` r
 # Install the R package on Windows
-install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/Builds/ePiE_1.25.zip", 
+install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/Builds/ePiE_1.37.zip", 
                  repos=NULL, 
                  method="libcurl")
 
 # Install the R package on MacOS
-install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/Builds/ePiE_1.25.tgz",
+install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/Builds/ePiE_1.37.tgz",
                  repos=NULL, 
                  method="libcurl")
 
 # Install the R package on Linux
-install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/Builds/ePiE_1.25.tar.gz", 
+install.packages("https://github.com/SHoeks/ePiE/raw/refs/heads/main/Builds/ePiE_1.37.tar.gz", 
                  repos=NULL, 
                  method="libcurl")
 ```
